@@ -19,7 +19,7 @@ namespace AzureFunctions.Maui.Elevator
 
         [FunctionName("GetElevators")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "elevator/all")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "elevator/all")] HttpRequest req,
             ILogger log)
         {
             var elevatorList = new List<ElevatorDeviceItem>();
