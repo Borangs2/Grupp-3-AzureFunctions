@@ -18,9 +18,9 @@ public class ErrandModel
 
     public Guid Id { get; set; }
 
-    public string Title { get; set; } = "";
+    public string Title { get; set; }
 
-    public string Description { get; set; } = "";
+    public string Description { get; set; }
 
     public ErrandStatus Status { get; set; }
     public DateTime LastEdited { get; set; }
