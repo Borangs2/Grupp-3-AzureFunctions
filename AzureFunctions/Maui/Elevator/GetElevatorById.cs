@@ -30,7 +30,7 @@ namespace AzureFunctions.Maui.Elevator
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "elevator")] HttpRequest req,
             ILogger log)
         {
-            var data = JsonConvert.DeserializeObject<string?>(await new StreamReader(req.Body).ReadToEndAsync());
+            var data = await new StreamReader(req.Body).ReadToEndAsync();
 
 
             if (!Guid.TryParse(data, out var elevatorId))
