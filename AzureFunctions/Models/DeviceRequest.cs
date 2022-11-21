@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace AzureFunctions.Models;
+
+internal class DeviceRequest
 {
-    internal class DeviceRequest
-    {
-        public string DeviceId { get; set; }
-    }
+    public string DeviceId { get; set; }
 }
+

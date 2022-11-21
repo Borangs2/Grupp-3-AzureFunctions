@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Dapper;
-using Grupp3_Elevator.Models;
+using AzureFunctions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;

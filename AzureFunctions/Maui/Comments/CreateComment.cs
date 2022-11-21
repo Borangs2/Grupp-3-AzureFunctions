@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Grupp3_Elevator.Models;
+using AzureFunctions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq.Expressions;
+using AzureFunctions.Models;
 using Dapper;
 
 namespace AzureFunctions.Maui.Comments

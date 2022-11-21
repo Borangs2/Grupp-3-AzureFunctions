@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Grupp3_Elevator.Models;
+using AzureFunctions.Models;
 using System.IO;
 
 namespace AzureFunctions.Maui.Errands

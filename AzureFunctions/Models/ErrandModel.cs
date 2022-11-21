@@ -1,4 +1,4 @@
-﻿using Grupp3_Elevator.Models;
+﻿using AzureFunctions.Models;
 using System;
 using System.Collections.Generic;
 

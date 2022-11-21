@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AzureFunctions.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
-using Grupp3_Elevator.Models;
 using Microsoft.Azure.Devices.Shared;
 
 namespace AzureFunctions.Maui.Elevator

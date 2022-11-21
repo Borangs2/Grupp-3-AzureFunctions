@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
 using System.Collections.Generic;
-using Grupp3_Elevator.Models;
+using AzureFunctions.Models;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
