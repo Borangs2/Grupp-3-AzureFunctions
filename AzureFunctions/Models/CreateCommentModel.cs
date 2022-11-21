@@ -1,17 +1,16 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Grupp3_Elevator.Models;
+namespace AzureFunctions.Models;
 
-public class ErrandCommentModel
+public class CreateErrandCommentModel
 {
     public Guid Id { get; set; }
     public string Content { get; set; }
     public Guid? Author { get; set; }
     public DateTime PostedAt { get; set; }
+    public Guid ErrandId { get; set; }
 
-    public ErrandCommentModel(Guid id, string content, string author, DateTime postedAt)
+    public CreateErrandCommentModel(Guid id, string content, string author, DateTime postedAt, Guid errandId)
     {
         Id = id;
         Content = content;
@@ -20,6 +19,6 @@ public class ErrandCommentModel
         else
             Author = null;
         PostedAt = postedAt;
+        ErrandId = errandId;
     }
 }
-

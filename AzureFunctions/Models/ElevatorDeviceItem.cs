@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Grupp3_Elevator.Models;
-
-public class ElevatorDetailedModel
+namespace AzureFunctions.Models;
+public class ElevatorDeviceItem
 {
     public enum ElevatorStatus
     {
@@ -14,12 +13,10 @@ public class ElevatorDetailedModel
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string ConnectionString { get; set; }
     public string Name { get; set; } = "";
     public ElevatorStatus Status { get; set; } = ElevatorStatus.Disabled;
     public bool DoorStatus { get; set; } = false;
     public int CurrentLevel { get; set; } = 0;
     public int TargetLevel { get; set; } = 0;
 
-    public List<ErrandModel> Errands { get; set; }
 }

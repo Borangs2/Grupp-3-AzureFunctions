@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
 using System.Collections.Generic;
 using Grupp3_Elevator.Models;
+using AzureFunctions.Models;
 
 namespace AzureFunctions.Maui.Elevator
 {
