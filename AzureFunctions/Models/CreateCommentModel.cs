@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Grupp3_Elevator.Models;
+namespace AzureFunctions.Models;
 
 public class CreateErrandCommentModel
 {

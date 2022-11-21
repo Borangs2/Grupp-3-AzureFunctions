@@ -1,33 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using AzureFunctions.Models;
-using Dapper;
+﻿using AzureFunctions.Maui.Elevator;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Azure.Devices;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Microsoft.Azure.Devices;
-using Microsoft.Azure.Devices.Shared;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Dapper;
+using AzureFunctions.Models;
+using System.IO;
 
-namespace AzureFunctions.Maui.Elevator
+namespace AzureFunctions.Maui.Errands
 {
-    public static class GetElevatorById
+    public static class GetErrandByTechnicianId
     {
-
         private static string DbConnectionString = "Server=tcp:kyh-devops.database.windows.net,1433;Initial Catalog=Kyh-Agile Grupp 3;Persist Security Info=False;User ID=CloudSA37b586b4;Password=Andreas1!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         private static RegistryManager _registryManager = RegistryManager.CreateFromConnectionString("HostName=Grup-3-Devops.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=cXHMcmESQtlUTvhMJ8q5aQvzf9aPcWQ9JAN6fCc2r2Q=");
 
-
-        [FunctionName("GetElevatorById")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "elevator")] HttpRequest req,
+        [FunctionName("GetErrandByTechnicianId")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "technicianErrand")] HttpRequest req,
             ILogger log)
         {
             var data = await new StreamReader(req.Body).ReadToEndAsync();
@@ -36,41 +34,13 @@ namespace AzureFunctions.Maui.Elevator
                 data = req.Query["id"];
             }
 
-
-            if (!Guid.TryParse(data, out var elevatorId))
+            if (!Guid.TryParse(data, out var technicianId))
                 return new BadRequestResult();
 
-
-
-
-            //Gets All Elevator properties
-            var twin = await _registryManager.GetTwinAsync(elevatorId.ToString());
-
-            var elevator = new ElevatorDetailedModel();
-            elevator.Id = Guid.Parse(twin.DeviceId);
-
-            try { elevator.Name = twin.Properties.Reported["deviceName"]; }
-            catch { elevator.Name = "Name unknown"; }
-
-            try { elevator.Status = twin.Properties.Reported["status"]; }
-            catch { elevator.Status = ElevatorDetailedModel.ElevatorStatus.Disabled; }
-
-            try { elevator.DoorStatus = twin.Properties.Reported["doorStatus"]; }
-            catch { elevator.DoorStatus = false; }
-
-            try { elevator.CurrentLevel = twin.Properties.Reported["currentLevel"]; }
-            catch { elevator.CurrentLevel = 0; }
-
-            try { elevator.TargetLevel = twin.Properties.Reported["targetLevel"]; }
-            catch { elevator.TargetLevel = 0; }
-
-            elevator.Errands = new List<ErrandModel>();
-
+            var errands = new List<ErrandModel>();
             using IDbConnection connection = new SqlConnection(DbConnectionString);
 
-            //Gets all errand properties
-            elevator.ConnectionString = await connection.QueryFirstOrDefaultAsync<string>("SELECT ConnectionString FROM Elevators WHERE Id = @Id", new { Id = data });
-            var errandResult = await connection.QueryAsync("SELECT * FROM Errands WHERE ElevatorModelId = @ElevatorId", new { ElevatorId = data });
+            var errandResult = await connection.QueryAsync("SELECT * FROM Errands WHERE TechnicianId = @TechnicianId", new { TechnicianId = technicianId });
 
             foreach (var errand in errandResult.ToList())
             {
@@ -85,7 +55,6 @@ namespace AzureFunctions.Maui.Elevator
                     Status = Enum.Parse<ErrandStatus>(errand.Status),
                     Comments = new List<ErrandCommentModel>()
                 };
-
 
 
                 //Gets the technician
@@ -107,7 +76,7 @@ namespace AzureFunctions.Maui.Elevator
                 //Gets all comments
                 var comments = await connection.QueryAsync(
                     "SELECT ErrandComments.Id AS 'CommentId', ErrandComments.Content,ErrandComments.PostedAt,ErrandComments.Author,Errands.Id AS 'ErrandId' FROM ErrandComments " +
-                    "INNER JOIN Errands ON ErrandComments.ErrandModelId = Errands.Id WHERE ErrandComments.ErrandModelId = @ErrandId", new {ErrandId = errand.Id});
+                    "INNER JOIN Errands ON ErrandComments.ErrandModelId = Errands.Id WHERE ErrandComments.ErrandModelId = @ErrandId", new { ErrandId = errand.Id });
 
                 foreach (var comment in comments)
                 {
@@ -118,10 +87,10 @@ namespace AzureFunctions.Maui.Elevator
                         comment.PostedAt);
                     addErrand.Comments.Add(addComment);
                 }
-                elevator.Errands.Add(addErrand);
+                errands.Add(addErrand);
             }
 
-            return new OkObjectResult(elevator);
+            return new OkObjectResult(errands);
         }
     }
 }
