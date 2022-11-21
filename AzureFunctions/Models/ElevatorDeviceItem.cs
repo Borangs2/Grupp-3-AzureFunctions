@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Grupp3_Elevator.Models;
+namespace AzureFunctions.Models;
 public class ElevatorDeviceItem
 {
     public enum ElevatorStatus

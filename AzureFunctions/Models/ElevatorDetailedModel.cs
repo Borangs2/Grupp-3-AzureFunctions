@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Grupp3_Elevator.Models;
+namespace AzureFunctions.Models;
 
 public class ElevatorDetailedModel
 {

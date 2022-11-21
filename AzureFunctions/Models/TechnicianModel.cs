@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Grupp3_Elevator.Models;
+namespace AzureFunctions.Models;
 
 public class TechnicianModel
 {
