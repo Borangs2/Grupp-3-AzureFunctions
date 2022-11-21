@@ -31,6 +31,10 @@ namespace AzureFunctions.Maui.Elevator
             ILogger log)
         {
             var data = await new StreamReader(req.Body).ReadToEndAsync();
+            if (data == string.Empty)
+            {
+                data = req.Query["id"];
+            }
 
 
             if (!Guid.TryParse(data, out var elevatorId))
