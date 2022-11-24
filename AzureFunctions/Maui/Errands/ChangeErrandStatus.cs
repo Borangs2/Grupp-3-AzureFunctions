@@ -28,13 +28,13 @@ namespace AzureFunctions.Maui.Errands
             dynamic data = JsonConvert.DeserializeObject<dynamic>(body);
 
 
-            if (data.status == null || data.errandId == null)
+            if (data.Status == null || data.ErrandId == null)
                 return new BadRequestResult();
 
-            if (!Enum.TryParse(data.status.ToString(), out ErrandStatus newStatus))
+            if (!Enum.TryParse(data.Status.ToString(), out ErrandStatus newStatus))
                 return new BadRequestResult();
 
-            if (!Guid.TryParse(data.errandId.ToString(), out Guid errandId))
+            if (!Guid.TryParse(data.ErrandId.ToString(), out Guid errandId))
                 return new BadRequestResult();
 
             try
