@@ -115,8 +115,8 @@ namespace AzureFunctions.Maui.Elevator
                         }
 
                         elevator.Errands.Add(addErrand);
-                        elevatorList.Add(elevator);
                     }
+                    elevatorList.Add(elevator);
                 }
             }
 
