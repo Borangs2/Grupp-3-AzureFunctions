@@ -48,7 +48,7 @@ namespace AzureFunctions.Maui.Comments
                 new {Id = data.Id, Content = data.Content, PostedAt = data.PostedAt, ErrandId = data.ErrandId, Author = data.Author});
 
             if(result != null )
-                return new OkObjectResult(data);
+                return new CreatedResult("", data);
             return new BadRequestResult();
         }
     }
