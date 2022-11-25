@@ -45,7 +45,9 @@ namespace AzureFunctions.Maui.Comments
             using IDbConnection connection = new SqlConnection(DbConnectionString);
 
             var result = await connection.QueryAsync("INSERT INTO ErrandComments VALUES (@Id, @Content, @PostedAt, @ErrandId, @Author)", 
-                new {Id = data.Id, Content = data.Content, PostedAt = data.PostedAt, ErrandId = data.ErrandId, Author = data.Author});
+                new {Id = data.Id, Content = data.Content, PostedAt = data.PostedAt.ToString("G"), ErrandId = data.ErrandId, Author = data.Author});
+            
+            log.LogInformation($"Posted at: {data.PostedAt}");
 
             if(result != null )
                 return new CreatedResult("", data);
