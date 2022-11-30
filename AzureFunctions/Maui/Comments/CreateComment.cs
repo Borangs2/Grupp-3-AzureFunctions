@@ -49,8 +49,11 @@ namespace AzureFunctions.Maui.Comments
             
             log.LogInformation($"Posted at: {data.PostedAt}");
 
-            if(result != null )
+            if (result != null)
+            {
+                UpdateLastEdited.Update(data.ErrandId.ToString());
                 return new CreatedResult("", data);
+            }
             return new BadRequestResult();
         }
     }

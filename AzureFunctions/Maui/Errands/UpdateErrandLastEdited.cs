@@ -24,13 +24,23 @@ namespace AzureFunctions.Maui.Errands
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "errand/update")] HttpRequest req,
             ILogger log)
         {
-            string body = await new StreamReader(req.Body).ReadToEndAsync();
-
-            if (body == null || body == string.Empty)
+            var data = await new StreamReader(req.Body).ReadToEndAsync();
+            if (data == string.Empty)
+            {
+                data = req.Query["id"];
+            }
+            if (data == null || data == string.Empty)
+            {
+                log.LogInformation("Body is empty");
                 return new BadRequestResult();
+            }
 
-            if (!Guid.TryParse(body, out Guid errandId))
+
+            if (!Guid.TryParse(data, out Guid errandId))
+            {
+                log.LogInformation("Body doesn't parse to Guid");
                 return new BadRequestResult();
+            }
 
             try
             {
@@ -40,6 +50,7 @@ namespace AzureFunctions.Maui.Errands
             }
             catch (Exception ex)
             {
+                log.LogInformation($"Error occurred: {ex.Message}");
                 return new InternalServerErrorResult();
             }
             return new NoContentResult();
