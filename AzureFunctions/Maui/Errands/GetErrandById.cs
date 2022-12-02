@@ -72,6 +72,7 @@ namespace AzureFunctions.Maui.Errands
                     comment.Author,
                     comment.PostedAt);
                 errandResult.Comments.Add(addComment);
+                errandResult.Comments = errandResult.Comments.OrderByDescending(c => c.PostedAt).ToList();
             }
 
 
