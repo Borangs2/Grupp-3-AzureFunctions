@@ -46,7 +46,7 @@ namespace AzureFunctions.Maui.Errands
             {
                 using IDbConnection connection = new SqlConnection(DbConnectionString);
 
-                var result = await connection.QueryAsync("UPDATE Errands SET LastEdited = @CurrentTime WHERE Id = @ErrandId", new { CurrentTime = DateTime.Now.ToString("G").ToString(), ErrandId = errandId });
+                var result = await connection.QueryAsync("UPDATE Errands SET LastEdited = @CurrentTime WHERE Id = @ErrandId", new { CurrentTime = DateTime.Now.ToString("G"), ErrandId = errandId });
             }
             catch (Exception ex)
             {
