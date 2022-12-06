@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Dapper;
 using AzureFunctions.Models;
 using System.IO;
+using AzureFunctions.Helpers;
 
 namespace AzureFunctions.Maui.Errands
 {
@@ -53,40 +54,9 @@ namespace AzureFunctions.Maui.Errands
                     CreatedBy = errand.CreatedBy,
                     LastEdited = errand.LastEdited,
                     Status = Enum.Parse<ErrandStatus>(errand.Status),
-                    Comments = new List<ErrandCommentModel>()
+                    Comments = await CommentHelper.GetErrandCommentsAsync(data, connection),
+                    Technician = await TechnicianHelper.GetErrandTechnicianAsync(data, connection),
                 };
-
-
-                //Gets the technician
-                var technicians = await connection.QueryAsync(
-                    "SELECT Technicians.Id AS 'TechnicianId', Technicians.Name, Errands.Id AS 'ErrandId' FROM Technicians " +
-                    "INNER JOIN Errands ON Technicians.Id = Errands.TechnicianId");
-
-                var technicianResult = technicians.FirstOrDefault(technician => technician.ErrandId.ToString() == errand.Id.ToString());
-                var technician = new TechnicianModel();
-                if (technicianResult == null)
-                    technician = null;
-                else
-                    technician = new TechnicianModel(technicianResult.TechnicianId, technicianResult.Name);
-
-                addErrand.Technician = technician;
-
-
-
-                //Gets all comments
-                var comments = await connection.QueryAsync(
-                    "SELECT ErrandComments.Id AS 'CommentId', ErrandComments.Content,ErrandComments.PostedAt,ErrandComments.Author,Errands.Id AS 'ErrandId' FROM ErrandComments " +
-                    "INNER JOIN Errands ON ErrandComments.ErrandModelId = Errands.Id WHERE ErrandComments.ErrandModelId = @ErrandId", new { ErrandId = errand.Id });
-
-                foreach (var comment in comments)
-                {
-                    var addComment = new ErrandCommentModel(
-                        comment.CommentId,
-                        comment.Content,
-                        comment.Author,
-                        comment.PostedAt);
-                    addErrand.Comments.Add(addComment);
-                }
                 errands.Add(addErrand);
             }
 
