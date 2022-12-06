@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
 using System.Collections.Generic;
+using AzureFunctions.Helpers;
 using AzureFunctions.Models;
 
 namespace AzureFunctions.Maui.Elevator
@@ -29,25 +30,7 @@ namespace AzureFunctions.Maui.Elevator
             {
                 foreach (var twin in await result.GetNextAsTwinAsync())
                 {
-                    var elevator = new ElevatorDeviceItem();
-                    elevator.Id = Guid.Parse(twin.DeviceId);
-
-                    try { elevator.Name = twin.Properties.Reported["deviceName"]; }
-                    catch { elevator.Name = "Name unknown"; }
-
-                    try { elevator.Status = twin.Properties.Reported["status"]; }
-                    catch { elevator.Status = ElevatorDeviceItem.ElevatorStatus.Disabled; }
-
-                    try { elevator.DoorStatus = twin.Properties.Reported["doorStatus"]; }
-                    catch { elevator.DoorStatus = false; }
-
-                    try { elevator.CurrentLevel = twin.Properties.Reported["currentLevel"]; }
-                    catch { elevator.CurrentLevel = 0; }
-
-                    try { elevator.TargetLevel = twin.Properties.Reported["targetLevel"]; }
-                    catch { elevator.TargetLevel = 0; }
-
-                    elevatorList.Add(elevator);
+                    elevatorList.Add(await ElevatorHelper.GetElevatorDeviceAsync<ElevatorDeviceItem>(twin.DeviceId));
                 }
             }
 

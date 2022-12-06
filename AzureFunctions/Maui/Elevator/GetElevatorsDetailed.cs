@@ -15,6 +15,8 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using System.Reflection.Metadata;
+using AzureFunctions.Helpers;
+using AzureFunctions.Models.Interfaces;
 
 namespace AzureFunctions.Maui.Elevator
 {
@@ -35,26 +37,7 @@ namespace AzureFunctions.Maui.Elevator
             {
                 foreach (var twin in await result.GetNextAsTwinAsync())
                 {
-
-                    var elevator = new ElevatorDetailedModel();
-                    elevator.Id = Guid.Parse(twin.DeviceId);
-
-                    try { elevator.Name = twin.Properties.Reported["deviceName"]; }
-                    catch { elevator.Name = "Name unknown"; }
-
-                    try { elevator.Status = twin.Properties.Reported["status"]; }
-                    catch { elevator.Status = ElevatorDetailedModel.ElevatorStatus.Disabled; }
-
-                    try { elevator.DoorStatus = twin.Properties.Reported["doorStatus"]; }
-                    catch { elevator.DoorStatus = false; }
-
-                    try { elevator.CurrentLevel = twin.Properties.Reported["currentLevel"]; }
-                    catch { elevator.CurrentLevel = 0; }
-
-                    try { elevator.TargetLevel = twin.Properties.Reported["targetLevel"]; }
-                    catch { elevator.TargetLevel = 0; }
-
-                    elevator.Errands = new List<ErrandModel>();
+                    var elevator = await ElevatorHelper.GetElevatorDeviceAsync<ElevatorDetailedModel>(twin.DeviceId);
 
                     using IDbConnection connection = new SqlConnection(DbConnectionString);
 
@@ -79,40 +62,11 @@ namespace AzureFunctions.Maui.Elevator
                             Comments = new List<ErrandCommentModel>()
                         };
 
-
-
                         //Gets the technician
-                        var technicians = await connection.QueryAsync(
-                            "SELECT Technicians.Id AS 'TechnicianId', Technicians.Name, Errands.Id AS 'ErrandId' FROM Technicians " +
-                            "INNER JOIN Errands ON Technicians.Id = Errands.TechnicianId");
-
-                        var technicianResult = technicians.FirstOrDefault(technician =>
-                            technician.ErrandId.ToString() == errand.Id.ToString());
-                        var technician = new TechnicianModel();
-                        if (technicianResult == null)
-                            technician = null;
-                        else
-                            technician = new TechnicianModel(technicianResult.TechnicianId, technicianResult.Name);
-
-                        addErrand.Technician = technician;
-
-
+                        addErrand.Technician = await TechnicianHelper.GetTechnicianAsync(errand.Id.ToString(), connection);
 
                         //Gets all comments
-                        var comments = await connection.QueryAsync(
-                            "SELECT ErrandComments.Id AS 'CommentId', ErrandComments.Content,ErrandComments.PostedAt,ErrandComments.Author,Errands.Id AS 'ErrandId' FROM ErrandComments " +
-                            "INNER JOIN Errands ON ErrandComments.ErrandModelId = Errands.Id WHERE ErrandComments.ErrandModelId = @ErrandId",
-                            new {ErrandId = errand.Id});
-
-                        foreach (var comment in comments)
-                        {
-                            var addComment = new ErrandCommentModel(
-                                comment.CommentId,
-                                comment.Content,
-                                comment.Author,
-                                comment.PostedAt);
-                            addErrand.Comments.Add(addComment);
-                        }
+                        errand.Comments = await CommentHelper.GetErrandCommentsAsync(errand.Id.ToString(), connection);
 
                         elevator.Errands.Add(addErrand);
                     }
