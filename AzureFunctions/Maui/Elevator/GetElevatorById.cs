@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AzureFunctions.Helpers;
 using AzureFunctions.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -41,28 +42,9 @@ namespace AzureFunctions.Maui.Elevator
                 return new BadRequestResult();
 
 
-
-
             //Gets All Elevator properties
-            var twin = await _registryManager.GetTwinAsync(elevatorId.ToString());
+            var elevator = await ElevatorHelper.GetElevatorDeviceAsync<ElevatorDetailedModel>(data);
 
-            var elevator = new ElevatorDetailedModel();
-            elevator.Id = Guid.Parse(twin.DeviceId);
-
-            try { elevator.Name = twin.Properties.Reported["deviceName"]; }
-            catch { elevator.Name = "Name unknown"; }
-
-            try { elevator.Status = twin.Properties.Reported["status"]; }
-            catch { elevator.Status = ElevatorDetailedModel.ElevatorStatus.Disabled; }
-
-            try { elevator.DoorStatus = twin.Properties.Reported["doorStatus"]; }
-            catch { elevator.DoorStatus = false; }
-
-            try { elevator.CurrentLevel = twin.Properties.Reported["currentLevel"]; }
-            catch { elevator.CurrentLevel = 0; }
-
-            try { elevator.TargetLevel = twin.Properties.Reported["targetLevel"]; }
-            catch { elevator.TargetLevel = 0; }
 
             elevator.Errands = new List<ErrandModel>();
 
