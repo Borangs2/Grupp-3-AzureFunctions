@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
+using AzureFunctions.Helpers;
 using Dapper;
 
 namespace AzureFunctions.Maui.Errands
@@ -41,40 +42,8 @@ namespace AzureFunctions.Maui.Errands
             //Gets all errand properties
             var errandResult = await connection.QueryFirstOrDefaultAsync<ErrandModel>("SELECT * FROM Errands WHERE Id = @Id", new { Id = data });
 
-            
-            //Gets the technician
-            var technicians = await connection.QueryAsync(
-                "SELECT Technicians.Id AS 'TechnicianId', Technicians.Name, Errands.Id AS 'ErrandId' FROM Technicians " +
-                "INNER JOIN Errands ON Technicians.Id = Errands.TechnicianId");
-
-            var technicianResult = technicians.FirstOrDefault(technician => technician.ErrandId.ToString() == errandResult.Id.ToString());
-            var technician = new TechnicianModel();
-            if (technicianResult == null)
-                technician = null;
-            else
-                technician = new TechnicianModel(technicianResult.TechnicianId, technicianResult.Name);
-
-            errandResult.Technician = technician;
-
-
-
-            //Gets all comments
-            var comments = await connection.QueryAsync(
-                "SELECT ErrandComments.Id AS 'CommentId', ErrandComments.Content,ErrandComments.PostedAt,ErrandComments.Author,Errands.Id AS 'ErrandId' FROM ErrandComments " +
-                "INNER JOIN Errands ON ErrandComments.ErrandModelId = Errands.Id WHERE ErrandComments.ErrandModelId = @ErrandId", new { ErrandId = errandResult.Id });
-
-            errandResult.Comments = new List<ErrandCommentModel>();
-            foreach (var comment in comments)
-            {
-                var addComment = new ErrandCommentModel(
-                    comment.CommentId,
-                    comment.Content,
-                    comment.Author,
-                    comment.PostedAt);
-                errandResult.Comments.Add(addComment);
-                errandResult.Comments = errandResult.Comments.OrderByDescending(c => c.PostedAt).ToList();
-            }
-
+            errandResult.Technician = await TechnicianHelper.GetErrandTechnicianAsync(data, connection);
+            errandResult.Comments = await CommentHelper.GetErrandCommentsAsync(errandResult.Id.ToString(), connection);
 
             return new OkObjectResult(errandResult);
         }

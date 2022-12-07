@@ -8,7 +8,7 @@ namespace AzureFunctions.Helpers;
 
 public static class TechnicianHelper
 {
-    public static async Task<TechnicianModel> GetTechnicianAsync(string errandId, IDbConnection connection)
+    public static async Task<TechnicianModel> GetErrandTechnicianAsync(string errandId, IDbConnection connection)
     {
         var technicians = await connection.QueryAsync(
             "SELECT Technicians.Id AS 'TechnicianId', Technicians.Name, Errands.Id AS 'ErrandId' FROM Technicians " +

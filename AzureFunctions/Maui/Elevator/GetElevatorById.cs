@@ -48,34 +48,9 @@ namespace AzureFunctions.Maui.Elevator
             elevator.Errands = new List<ErrandModel>();
 
             using IDbConnection connection = new SqlConnection(DbConnectionString);
-
-            //Gets all errand properties
             elevator.ConnectionString = await connection.QueryFirstOrDefaultAsync<string>("SELECT ConnectionString FROM Elevators WHERE Id = @Id", new { Id = data });
-            var errandResult = await connection.QueryAsync("SELECT * FROM Errands WHERE ElevatorModelId = @ElevatorId", new { ElevatorId = data });
 
-            foreach (var errand in errandResult.ToList())
-            {
-                var addErrand = new ErrandModel()
-                {
-                    Id = errand.Id,
-                    Title = errand.Title,
-                    Description = errand.Description,
-                    CreatedAt = errand.CreatedAt,
-                    CreatedBy = errand.CreatedBy,
-                    LastEdited = errand.LastEdited,
-                    Status = Enum.Parse<ErrandStatus>(errand.Status),
-                    Comments = new List<ErrandCommentModel>()
-                };
-
-
-                //Gets the technician
-                addErrand.Technician = await TechnicianHelper.GetTechnicianAsync(errand.Id.ToString(), connection);
-
-                //Gets all comments
-                errand.Comments = await CommentHelper.GetErrandCommentsAsync(errand.Id.ToString(), connection);
-
-                elevator.Errands.Add(addErrand);
-            }
+            elevator.Errands = await ErrandHelper.GetElevatorErrands(elevator.Id.ToString(), connection);
 
             return new OkObjectResult(elevator);
         }
