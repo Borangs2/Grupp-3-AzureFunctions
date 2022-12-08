@@ -54,8 +54,8 @@ namespace AzureFunctions.Maui.Errands
                     CreatedBy = errand.CreatedBy,
                     LastEdited = errand.LastEdited,
                     Status = Enum.Parse<ErrandStatus>(errand.Status),
-                    Comments = await CommentHelper.GetErrandCommentsAsync(data, connection),
-                    Technician = await TechnicianHelper.GetErrandTechnicianAsync(data, connection),
+                    Comments = await CommentHelper.GetErrandCommentsAsync(errand.Id.ToString(), connection),
+                    Technician = await TechnicianHelper.GetErrandTechnicianAsync(errand.Id.ToString(), connection),
                 };
                 errands.Add(addErrand);
             }
