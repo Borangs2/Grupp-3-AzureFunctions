@@ -1,20 +1,17 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using AzureFunctions.Models.Interfaces;
 
 namespace AzureFunctions.Models;
-public class ElevatorDeviceItem
+public class ElevatorDeviceItem : IElevator
 {
-    public enum ElevatorStatus
+    public ElevatorDeviceItem()
     {
-        Disabled /*Elevator off, doors closed*/,
-        Idle /*Elevator on, doors closed, not running*/,
-        Running /*Elevator on, doors closed, running*/,
-        Error /*Elevator error*/
+        
     }
-
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "";
-    public ElevatorStatus Status { get; set; } = ElevatorStatus.Disabled;
+    public IElevator.ElevatorStatus Status { get; set; } = IElevator.ElevatorStatus.Disabled;
     public bool DoorStatus { get; set; } = false;
     public int CurrentLevel { get; set; } = 0;
     public int TargetLevel { get; set; } = 0;

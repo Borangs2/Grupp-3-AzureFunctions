@@ -47,6 +47,8 @@ namespace AzureFunctions.Maui.Errands
             {
                 return new InternalServerErrorResult();
             }
+            UpdateLastEdited.Update(data.ErrandId.ToString());
+
             return new NoContentResult();
         }
     }

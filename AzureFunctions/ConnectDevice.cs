@@ -14,7 +14,7 @@ namespace AzureFunctions
 {
     public static class ConnectDevice
     {
-        private static readonly string iothub = Environment.GetEnvironmentVariable("IoTHubConnectionString");
+        private static readonly string iothub = "HostName=Grup-3-Devops.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=cXHMcmESQtlUTvhMJ8q5aQvzf9aPcWQ9JAN6fCc2r2Q=";
         private static readonly RegistryManager _registryManager = RegistryManager.CreateFromConnectionString(iothub);
 
         [FunctionName("ConnectDevice")]
